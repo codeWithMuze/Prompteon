@@ -27,7 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, history, onSignI
               <div className="w-4 h-4 bg-zinc-950 rounded-sm transform rotate-45" />
             </div>
             <div className="flex flex-col -space-y-1">
-              <span className="text-xl font-black text-white tracking-tighter">PromptForge</span>
+              <span className="text-xl font-black text-white tracking-tighter">Prompteon</span>
               <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.3em]">Neural Engine</span>
             </div>
           </div>
@@ -40,7 +40,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, history, onSignI
                   <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Active License</p>
                 </div>
                 <button onClick={onLogout} className="w-10 h-10 rounded-full border border-white/10 p-0.5 hover:border-emerald-500/50 transition-colors">
-                   <img src={`https://ui-avatars.com/api/?name=${user.name}&background=09090b&color=fafafa`} className="w-full h-full rounded-full grayscale" alt="avatar" />
+                  <img src={`https://ui-avatars.com/api/?name=${user.name}&background=09090b&color=fafafa`} className="w-full h-full rounded-full grayscale" alt="avatar" />
                 </button>
               </div>
             ) : (
@@ -59,13 +59,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, history, onSignI
       <footer className="py-20 border-t border-white/5 bg-zinc-950/30">
         <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col items-center md:items-start">
-            <span className="text-lg font-black text-white">PromptForge AI</span>
+            <span className="text-lg font-black text-white">Prompteon AI</span>
             <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mt-1">© 2024 NEURAL_BRIDGE OPERATIONS</span>
           </div>
           <div className="flex space-x-8 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-             <a href="#" className="hover:text-zinc-100 transition-colors">Status</a>
-             <a href="#" className="hover:text-zinc-100 transition-colors">Documentation</a>
-             <a href="#" className="hover:text-zinc-100 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-zinc-100 transition-colors">Status</a>
+            <a href="#" className="hover:text-zinc-100 transition-colors">Documentation</a>
+            <a href="#" className="hover:text-zinc-100 transition-colors">Privacy</a>
           </div>
         </div>
       </footer>

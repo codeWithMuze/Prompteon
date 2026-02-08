@@ -5,7 +5,7 @@ export const analyzePromptServer = async (prompt: string, mode: PromptMode) => {
   // Always initialize inside the function to ensure the freshest API key context in serverless environments
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-  const FORGE_SYSTEM_INSTRUCTION = `You are the PromptForge Neural Engine. 
+  const FORGE_SYSTEM_INSTRUCTION = `You are the Prompteon Neural Engine. 
 Audit raw user input and reconstruct it into a high-performance "Forged Output".
 Return response in strictly valid JSON format.`;
 
@@ -45,6 +45,6 @@ Return response in strictly valid JSON format.`;
 
   const text = response.text;
   if (!text) throw new Error("The Forge failed to respond.");
-  
+
   return JSON.parse(text);
 };

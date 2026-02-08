@@ -3,7 +3,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'PromptForge AI | Advanced Prompt Engineering Workbench',
+  title: 'Prompteon AI | Advanced Prompt Engineering Workbench',
   description: 'Elite-tier AI instruction forge and analytical suite for professional engineers.',
 };
 
