@@ -26,6 +26,8 @@ export const metadata: Metadata = {
   description: 'Elite-tier AI instruction forge and analytical suite for professional engineers.',
 };
 
+import { AuthProvider } from '../components/AuthProvider';
+
 export default function RootLayout({
   children,
 }: {
@@ -34,7 +36,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased bg-[#050505] text-[#fafafa] min-h-screen font-sans selection:bg-emerald-500/30 selection:text-white">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

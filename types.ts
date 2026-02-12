@@ -18,7 +18,7 @@ export const ModeDetails: Record<PromptMode, string> = {
 };
 
 // Added missing AuthMode type for authentication state management
-export type AuthMode = 'signin' | 'signup';
+export type AuthMode = 'signin' | 'signup' | 'forgot-password';
 
 export interface PromptMetrics {
   clarity: number;
@@ -45,7 +45,16 @@ export interface User {
   email: string;
   name: string;
   picture?: string;
+  phone?: string;
+  phone_verified?: boolean;
   plan: 'free' | 'pro';
+  preferences?: {
+    theme: 'dark' | 'light' | 'system';
+    model?: string;
+    outputFormat?: 'structured' | 'conversational';
+    depthLevel?: number;
+  };
+  token_version?: number;
 }
 
 export interface PromptHistoryItem {

@@ -8,19 +8,71 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: radial-gradient(circle at 50% -20%, #18181b 0%, #09090b 80%);
-  background-color: #09090b;
+  background-color: #05060a;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(0, 40, 80, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(0, 80, 60, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #05060a 0%, #080a12 100%);
   background-attachment: fixed;
   color: #fafafa;
   -webkit-font-smoothing: antialiased;
   margin: 0;
-  background-color: #0a0a0c;
-  background-image:
-    radial-gradient(at 0% 0%, rgba(88, 129, 87, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(163, 177, 138, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(52, 78, 65, 0.05) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(88, 129, 87, 0.05) 0px, transparent 50%);
-  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Star Field Utilities */
+.stars-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.4;
+  /* Global star dimmer */
+}
+
+.stars-sm {
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  box-shadow: 1475px 1776px #FFF, 836px 1656px #FFF, 127px 1148px #FFF, 420px 735px #FFF, 1928px 1863px #FFF, 502px 142px #FFF, 1756px 638px #FFF, 1754px 1974px #FFF, 321px 1358px #FFF, 1378px 1761px #FFF, 174px 1779px #FFF, 1073px 610px #FFF, 1215px 1568px #FFF, 1845px 760px #FFF, 915px 815px #FFF, 368px 1630px #FFF, 1956px 1017px #FFF, 1423px 1827px #FFF, 345px 1195px #FFF, 672px 1836px #FFF, 892px 1256px #FFF, 1634px 192px #FFF, 621px 54px #FFF, 1874px 1253px #FFF, 1287px 198px #FFF, 543px 256px #FFF, 987px 1764px #FFF, 1654px 123px #FFF, 32px 1854px #FFF, 1543px 892px #FFF, 1234px 567px #FFF, 876px 123px #FFF, 456px 789px #FFF, 1987px 345px #FFF, 234px 1678px #FFF, 678px 901px #FFF, 1456px 234px #FFF, 890px 1567px #FFF, 123px 456px #FFF, 1789px 1234px #FFF, 345px 1987px #FFF, 654px 321px #FFF, 1890px 765px #FFF, 432px 1543px #FFF, 987px 234px #FFF, 1567px 890px #FFF, 210px 1345px #FFF, 765px 678px #FFF, 1345px 1920px #FFF, 567px 432px #FFF, 1765px 987px #FFF, 321px 1456px #FFF, 890px 765px #FFF, 1432px 210px #FFF, 654px 1789px #FFF, 1234px 890px #FFF, 345px 321px #FFF, 1987px 1567px #FFF, 456px 1234px #FFF, 890px 567px #FFF, 1567px 1987px #FFF, 234px 890px #FFF, 678px 1345px #FFF, 1345px 456px #FFF, 987px 1765px #FFF, 123px 890px #FFF, 1654px 345px #FFF, 432px 1234px #FFF, 1890px 567px #FFF, 765px 1987px #FFF, 1543px 210px #FFF;
+  animation: move-stars 120s linear infinite;
+  /* Slower */
+}
+
+.stars-md {
+  width: 2px;
+  height: 2px;
+  background: transparent;
+  box-shadow: 1744px 122px #FFF, 134px 1321px #FFF, 92px 859px #FFF, 1634px 1658px #FFF, 1642px 764px #FFF, 1928px 1234px #FFF, 453px 982px #FFF, 1289px 154px #FFF, 675px 1932px #FFF, 1456px 876px #FFF, 234px 456px #FFF, 1890px 123px #FFF, 765px 1654px #FFF, 345px 890px #FFF, 1567px 321px #FFF, 123px 1987px #FFF, 987px 654px #FFF, 1432px 1432px #FFF, 567px 234px #FFF, 1876px 1765px #FFF;
+  animation: move-stars 200s linear infinite;
+  /* Slower */
+  opacity: 0.7;
+}
+
+.planet-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 90% 20%, rgba(100, 160, 255, 0.02), transparent 50%);
+  /* Very subtle */
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes move-stars {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-2000px);
+  }
 }
 
 .text-gradient {
@@ -30,20 +82,58 @@ body {
   background-clip: text;
 }
 
+/* Pro-Level Glassmorphism */
 .glass-panel {
-  background: rgba(20, 20, 22, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background: rgba(20, 20, 22, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  /* Inner Top Highlight */
 }
 
 .glass-panel-heavy {
-  background: rgba(10, 10, 12, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  background: rgba(9, 9, 11, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  @apply glass-panel transition-all duration-300;
+
+  &:hover {
+    background: rgba(25, 25, 28, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 20px 40px -10px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.animate-reveal {
+  animation: reveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 h1,

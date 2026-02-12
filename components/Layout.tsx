@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { User, PromptHistoryItem } from '../types';
+import { PromptHistoryItem } from '../types';
+import { useAuth } from './AuthProvider';
+import { UserMenu } from './UserMenu';
 
 interface LayoutProps {
   children: React.ReactNode;
-  user: User | null;
   history: PromptHistoryItem[];
   onSignInClick: () => void;
-  onLogout: () => void;
+  // Removed onLogout and user as they are now handled by UserMenu and AuthProvider
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, user, history, onSignInClick, onLogout }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, history, onSignInClick }) => {
   const [scrolled, setScrolled] = useState(false);
+  const { user, isLoading } = useAuth(); // Global Auth State
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -19,10 +21,23 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, history, onSignI
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#09090b] selection:bg-tactical-500 selection:text-white relative">
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 mix-blend-soft-light fixed pointer-events-none z-0"></div>
+    <div className="min-h-screen bg-[#05060a] selection:bg-tactical-500 selection:text-white relative overflow-hidden">
+      {/* Cinematic Star Field System */}
+      <div className="stars-wrapper">
+        <div className="stars-sm" />
+        <div className="stars-md" />
+      </div>
 
-      <header className={`fixed top-0 inset-x-0 z-[100] transition-all duration-300 ${scrolled ? 'h-16 bg-zinc-950/80 backdrop-blur-md border-b border-white/5 shadow-2xl shadow-tactical-900/5' : 'h-24 bg-transparent'}`}>
+      {/* Distant Planet Glow */}
+      <div className="planet-glow" />
+
+      {/* Neural Connection Lines */}
+      <div className="neural-lines" />
+
+      {/* Noise Overlay */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-15 brightness-100 mix-blend-overlay fixed pointer-events-none z-[2]"></div>
+
+      <header className={`fixed top-0 inset-x-0 z-[100] transition-all duration-300 ${scrolled ? 'h-16 bg-[#05060a]/80 backdrop-blur-md border-b border-white/5 shadow-2xl shadow-tactical-900/5' : 'h-24 bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-8 h-full flex items-center justify-between">
           <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => window.location.reload()}>
             <div className="relative group/logo">
@@ -47,18 +62,24 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, history, onSignI
           </div>
 
           <div className="flex items-center space-x-6">
-            {user ? (
-              <div className="flex items-center space-x-4">
-                <div className="text-right hidden sm:block">
-                  <p className="text-xs font-black text-zinc-100 leading-none">{user.name}</p>
-                  <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Active License</p>
+            {isLoading ? (
+              // Loading Skeleton
+              <div className="flex items-center space-x-4 animate-pulse">
+                <div className="hidden sm:block space-y-2">
+                  <div className="w-20 h-2 bg-white/10 rounded"></div>
+                  <div className="w-12 h-1.5 bg-white/5 rounded ml-auto"></div>
                 </div>
-                <button onClick={onLogout} className="w-10 h-10 rounded-full border border-white/10 p-0.5 hover:border-emerald-500/50 transition-colors">
-                  <img src={`https://ui-avatars.com/api/?name=${user.name}&background=09090b&color=fafafa`} className="w-full h-full rounded-full grayscale" alt="avatar" />
-                </button>
+                <div className="w-10 h-10 rounded-full bg-white/5"></div>
               </div>
+            ) : user ? (
+              // Authenticated View
+              <UserMenu />
             ) : (
-              <button onClick={onSignInClick} className="h-10 px-6 bg-zinc-100 text-zinc-950 text-xs font-black rounded-lg hover:bg-white transition-all active:scale-95 shadow-xl uppercase tracking-widest">
+              // Guest View
+              <button
+                onClick={onSignInClick}
+                className="h-10 px-6 bg-zinc-100 text-zinc-950 text-xs font-black rounded-lg hover:bg-white transition-all active:scale-95 shadow-xl uppercase tracking-widest"
+              >
                 Authorize
               </button>
             )}

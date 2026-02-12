@@ -9,17 +9,34 @@ import { AuthView } from '../components/AuthView';
 import { supabase } from '../services/supabaseClient';
 import { fetchUserHistory, savePromptToHistory } from '../services/historyService';
 
-export default function Page() {
+import { AuthProvider, useAuth } from '../components/AuthProvider';
+
+function Workbench() {
+  const { user, login, logout } = useAuth();
   const [state, setState] = useState<AppState>({
     originalPrompt: '',
     mode: PromptMode.GENERAL,
     isAnalyzing: false,
     result: null,
     error: null,
-    user: null,
+    user: null, // Initial local state, will sync with context
     currentView: 'workbench',
     history: [],
   });
+
+  // Sync context user to local state for now (refactoring step)
+  useEffect(() => {
+    if (user) {
+      setState(prev => ({ ...prev, user }));
+      fetchUserHistory(user.id).then(history => setState(prev => ({ ...prev, history })));
+    } else {
+      setState(prev => ({ ...prev, user: null }));
+    }
+  }, [user]);
+
+  // The rest of the component...
+  // Simplify handleForge slightly if needed, but keeping logic for now
+  // ...
 
   const [loadingStep, setLoadingStep] = useState(0);
   const loadingMessages = [
@@ -33,23 +50,6 @@ export default function Page() {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const initAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const user: User = {
-          id: session.user.id,
-          email: session.user.email || '',
-          name: session.user.user_metadata.name || 'Architect',
-          plan: 'free',
-        };
-        const history = await fetchUserHistory(user.id);
-        setState(prev => ({ ...prev, user, history }));
-      }
-    };
-    initAuth();
-  }, []);
 
   useEffect(() => {
     let interval: any;
@@ -89,15 +89,16 @@ export default function Page() {
 
   return (
     <Layout
-      user={state.user}
       history={state.history}
       onSignInClick={() => setState(prev => ({ ...prev, currentView: 'auth' }))}
-      onLogout={() => supabase.auth.signOut().then(() => window.location.reload())}
     >
       {state.currentView === 'auth' ? (
         <AuthView
           initialMode="signin"
-          onSuccess={(user) => setState(prev => ({ ...prev, user, currentView: 'workbench' }))}
+          onSuccess={(user) => {
+            login(user);
+            setState(prev => ({ ...prev, currentView: 'workbench' }));
+          }}
           onBack={() => setState(prev => ({ ...prev, currentView: 'workbench' }))}
         />
       ) : (
@@ -225,4 +226,8 @@ export default function Page() {
       )}
     </Layout>
   );
+}
+
+export default function Page() {
+  return <Workbench />;
 }

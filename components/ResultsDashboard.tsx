@@ -23,8 +23,8 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result }) =>
     <div className="relative w-full">
       {/* PRO-LEVEL BACKGROUND LAYER */}
       <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none bg-[#09090b]">
-        {/* High Density Grid with Radial Mask */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        {/* High Density Grid with Radial Mask - Refined Opacity */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-50" />
 
         {/* Primary Ambient Top Light */}
         <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-tactical-500/10 blur-[120px] rounded-full opacity-70" />
@@ -42,73 +42,73 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result }) =>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12 lg:gap-20 items-start">
 
             {/* Grade Sidebar */}
-            <div className="lg:col-span-4 lg:sticky lg:top-32 space-y-8 md:space-y-10">
+            <div className="lg:col-span-4 lg:sticky lg:top-32 space-y-8 md:space-y-10 animate-reveal">
               <div className="text-center lg:text-left relative">
-                <div className="absolute -inset-4 bg-tactical-500/20 blur-3xl rounded-full opacity-50 pointer-events-none"></div>
-                <span className="relative text-[10px] md:text-[11px] font-black text-zinc-400 uppercase tracking-[0.4em] mb-4 block">Overall Performance</span>
+                <div className="absolute -inset-10 bg-tactical-500/10 blur-[60px] rounded-full opacity-60 pointer-events-none animate-pulse"></div>
+                <span className="relative text-[10px] md:text-[11px] font-black text-zinc-500 uppercase tracking-[0.4em] mb-4 block pl-1">Overall Performance</span>
                 <div className="relative flex items-baseline justify-center lg:justify-start">
-                  <span className="text-[80px] sm:text-[100px] md:text-[120px] font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-600 leading-none tracking-tighter drop-shadow-2xl">
+                  <span className="text-[100px] sm:text-[120px] md:text-[140px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-600 leading-[0.85] tracking-tighter drop-shadow-2xl z-10">
                     {result.score}
                   </span>
-                  <span className="text-zinc-600 text-2xl md:text-3xl font-black ml-3 md:ml-4">/100</span>
+                  <span className="text-zinc-600 text-2xl md:text-3xl font-black ml-4 rotate-[-5deg] origin-bottom-left opacity-60">/100</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
-                <div className="glass-panel p-5 md:p-6 rounded-3xl flex flex-col items-center lg:items-start justify-center hover:bg-zinc-800/50 transition-colors group">
-                  <span className="text-[9px] md:text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1 group-hover:text-zinc-400 transition-colors">Logic Level</span>
-                  <span className="text-[13px] md:text-[14px] font-bold text-zinc-100 uppercase">{result.difficulty}</span>
+                <div className="glass-card p-6 rounded-[20px] flex flex-col items-center lg:items-start justify-center group cursor-default">
+                  <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 group-hover:text-tactical-400 transition-colors">Logic Level</span>
+                  <span className="text-[14px] font-bold text-zinc-100 uppercase tracking-wide group-hover:tracking-wider transition-all">{result.difficulty}</span>
                 </div>
-                <div className="glass-panel p-5 md:p-6 rounded-3xl flex flex-col items-center lg:items-start justify-center hover:bg-zinc-800/50 transition-colors group">
-                  <span className="text-[9px] md:text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1 group-hover:text-zinc-400 transition-colors">Architecture</span>
-                  <span className="text-[13px] md:text-[14px] font-bold text-zinc-100 uppercase truncate max-w-full px-1">{result.useCase}</span>
+                <div className="glass-card p-6 rounded-[20px] flex flex-col items-center lg:items-start justify-center group cursor-default">
+                  <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 group-hover:text-tactical-400 transition-colors">Architecture</span>
+                  <span className="text-[14px] font-bold text-zinc-100 uppercase truncate max-w-full tracking-wide group-hover:tracking-wider transition-all">{result.useCase}</span>
                 </div>
               </div>
             </div>
 
             {/* Expert Review Body */}
-            <div className="lg:col-span-8 space-y-12 md:space-y-16">
-              <div className="space-y-6 md:space-y-8 text-center lg:text-left">
-                <div className="flex items-center justify-center lg:justify-start space-x-4 md:space-x-6">
-                  <div className="hidden xs:block w-8 md:w-12 h-[2px] bg-zinc-100" />
-                  <h3 className="text-2xl sm:text-3xl md:text-5xl font-black text-zinc-100 tracking-tight">Audit Summary</h3>
+            <div className="lg:col-span-8 space-y-12 md:space-y-16 animate-reveal [animation-delay:200ms]">
+              <div className="space-y-8 text-center lg:text-left">
+                <div className="flex items-center justify-center lg:justify-start space-x-6">
+                  <div className="hidden xs:block w-12 h-[1px] bg-gradient-to-r from-zinc-500 to-transparent" />
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-zinc-100 tracking-tight text-glow">Audit Summary</h3>
                 </div>
-                <p className="text-base md:text-lg lg:text-xl text-zinc-300 font-medium leading-relaxed max-w-3xl mx-auto lg:mx-0">
+                <p className="text-base md:text-lg lg:text-xl text-zinc-300 font-medium leading-[1.8] max-w-3xl mx-auto lg:mx-0 tracking-wide">
                   {result.detailedAnalysis}
                 </p>
               </div>
 
               {/* Strength/Fix Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div className="space-y-4 md:space-y-6">
-                  <h4 className="text-[10px] md:text-[11px] font-black text-zinc-500 uppercase tracking-[0.3em] flex items-center justify-center md:justify-start space-x-3">
-                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full box-shadow-glow" />
+                <div className="space-y-6">
+                  <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] flex items-center justify-center md:justify-start space-x-3 pl-1">
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
                     <span>Success Vectors</span>
                   </h4>
-                  <div className="space-y-3 md:space-y-4">
+                  <div className="space-y-4">
                     {result.strengths.map((s, i) => (
-                      <div key={i} className="flex items-start space-x-4 p-4 md:p-5 glass-panel rounded-2xl hover:bg-emerald-500/5 transition-all group">
-                        <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-emerald-500/20 transition-colors">
-                          <svg className="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" /></svg>
+                      <div key={i} className="glass-card flex items-start space-x-5 p-5 rounded-[20px] group transition-all duration-300">
+                        <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0 mt-0.5 ring-1 ring-emerald-500/20 group-hover:bg-emerald-500/20 transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                          <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                         </div>
-                        <span className="text-[13px] md:text-[14px] font-bold text-zinc-300 leading-snug group-hover:text-emerald-100 transition-colors">{s}</span>
+                        <span className="text-[14px] font-medium text-zinc-300 leading-relaxed group-hover:text-zinc-100 transition-colors">{s}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="space-y-4 md:space-y-6">
-                  <h4 className="text-[10px] md:text-[11px] font-black text-zinc-500 uppercase tracking-[0.3em] flex items-center justify-center md:justify-start space-x-3">
-                    <span className="w-1.5 h-1.5 bg-amber-400 rounded-full box-shadow-glow" />
+                <div className="space-y-6">
+                  <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] flex items-center justify-center md:justify-start space-x-3 pl-1">
+                    <span className="w-1.5 h-1.5 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
                     <span>Optimization Targets</span>
                   </h4>
-                  <div className="space-y-3 md:space-y-4">
+                  <div className="space-y-4">
                     {result.improvements.map((im, i) => (
-                      <div key={i} className="flex items-start space-x-4 p-4 md:p-5 glass-panel rounded-2xl hover:bg-amber-500/5 transition-all group">
-                        <div className="w-5 h-5 rounded-full bg-amber-500/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-amber-500/20 transition-colors">
-                          <svg className="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                      <div key={i} className="glass-card flex items-start space-x-5 p-5 rounded-[20px] group transition-all duration-300">
+                        <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center flex-shrink-0 mt-0.5 ring-1 ring-amber-500/20 group-hover:bg-amber-500/20 transition-all shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+                          <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                         </div>
-                        <span className="text-[13px] md:text-[14px] font-bold text-zinc-300 leading-snug group-hover:text-amber-100 transition-colors">{im}</span>
+                        <span className="text-[14px] font-medium text-zinc-300 leading-relaxed group-hover:text-zinc-100 transition-colors">{im}</span>
                       </div>
                     ))}
                   </div>
@@ -156,94 +156,93 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result }) =>
               </div>
             </div>
 
-            <div className="relative w-full group overflow-hidden">
+            <div className="relative w-full group overflow-hidden animate-reveal [animation-delay:400ms]">
               {/* Structural Editor Interface */}
-              <div className="tool-bg tool-border rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden ring-1 ring-white/10 w-full flex flex-col">
+              <div className="glass-panel-heavy rounded-[24px] overflow-hidden ring-1 ring-white/10 w-full flex flex-col shadow-2xl relative">
+                {/* Inner Glow */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-transparent pointer-events-none" />
 
                 {/* Toolbar */}
-                <div className="h-12 md:h-14 border-b border-white/10 px-5 md:px-10 flex items-center justify-between bg-zinc-900/90 backdrop-blur-xl">
-                  <div className="flex items-center space-x-4 md:space-x-10">
-                    <div className="flex space-x-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-white/5" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-white/5" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-white/5" />
+                <div className="h-14 border-b border-white/5 px-6 flex items-center justify-between bg-zinc-950/80 backdrop-blur-xl">
+                  <div className="flex items-center space-x-8">
+                    <div className="flex space-x-2 group/actions">
+                      <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E] shadow-sm group-hover/actions:brightness-110 transition-all" />
+                      <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] shadow-sm group-hover/actions:brightness-110 transition-all" />
+                      <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29] shadow-sm group-hover/actions:brightness-110 transition-all" />
                     </div>
-                    <div className="hidden lg:flex items-center space-x-8 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">
-                      <div className="flex items-center space-x-2">
-                        <span className="opacity-50">CHAR:</span> <span className="text-zinc-400">{result.improvedPrompt.length}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="opacity-50">WORD:</span> <span className="text-zinc-400">{wordCount}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="opacity-50">LANG:</span> <span className="text-zinc-400">PROMPT_ENG_V2</span>
+
+                    {/* Fake Tabs */}
+                    <div className="hidden lg:flex items-center">
+                      <div className="flex items-center space-x-2 px-4 py-1.5 bg-zinc-800/40 rounded-t-lg border-t border-x border-white/5 relative top-[1px]">
+                        <svg className="w-3 h-3 text-tactical-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <span className="text-[11px] font-medium text-zinc-300">optimized_prompt.v2</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-3 md:space-x-4">
-                    <div className="hidden xs:flex items-center space-x-2 px-2.5 py-1 bg-zinc-800/50 border border-white/5 rounded-md">
-                      <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">UTF-8</span>
+                  <div className="flex items-center space-x-6">
+                    <div className="hidden lg:flex items-center space-x-6 text-[10px] font-bold uppercase tracking-widest text-zinc-600">
+                      <div className="flex items-center space-x-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
+                        <span>{result.improvedPrompt.length} chars</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
+                        <span>{wordCount} words</span>
+                      </div>
                     </div>
-                    <div className="hidden xs:block h-3 w-[1px] bg-white/10 mx-1" />
-                    <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest truncate">v1.0.4-stable</span>
+
+                    <div className="h-4 w-[1px] bg-white/10 hidden lg:block" />
+
+                    <div className="flex items-center space-x-2 px-3 py-1 bg-zinc-900 border border-white/10 rounded-md shadow-inner">
+                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">UTF-8</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex-1 flex flex-row min-h-[300px] md:min-h-[400px]">
-                  {/* Editor Gutter (Hidden on very small screens) */}
-                  <div className="hidden sm:flex w-12 md:w-20 border-r border-white/5 bg-zinc-950/20 flex-col items-center py-8 md:py-10 select-none">
+                <div className="flex-1 flex flex-row min-h-[400px] md:min-h-[500px]">
+                  {/* Editor Gutter */}
+                  <div className="hidden sm:flex w-16 border-r border-white/5 bg-zinc-950/40 flex-col items-end pr-4 py-8 select-none font-mono text-[11px] text-zinc-700 leading-[1.8]">
                     {Array.from({ length: Math.max(lineCount, 12) }).map((_, i) => (
-                      <div key={i} className="text-[10px] md:text-[11px] font-mono text-zinc-700 h-6 md:h-7 flex items-center justify-center font-medium">
-                        {(i + 1).toString().padStart(2, '0')}
-                      </div>
+                      <div key={i} className="h-[1.8em]">{(i + 1)}</div>
                     ))}
                   </div>
 
-                  {/* Main Content Area - Scrollbar Hidden */}
-                  <div className="flex-1 p-6 md:p-12 lg:p-16 bg-[#0B0C10] relative group overflow-auto no-scrollbar">
-                    {/* Glass Background Glares (Modified for clearer text reading) */}
-                    <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-tactical-500/[0.03] blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                  {/* Main Content Area */}
+                  <div className="flex-1 p-6 md:p-10 bg-[#0B0C10] relative overflow-auto no-scrollbar group cursor-text">
+                    {/* Glass Glares */}
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tactical-500/[0.02] blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-                    {/* Dynamic Semantic Tags */}
-                    <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-12">
-                      <span className="px-2.5 py-1 bg-tactical-500/10 border border-tactical-500/20 rounded text-[8px] md:text-[9px] font-black text-tactical-400 uppercase tracking-widest">Optimized Structure</span>
-                      <span className="px-2.5 py-1 bg-zinc-800/50 border border-white/5 rounded text-[8px] md:text-[9px] font-black text-zinc-400 uppercase tracking-widest">Zero Redundancy</span>
-                    </div>
-
-                    {/* Refined Typography */}
-                    <div className="relative z-10 mono text-[14px] md:text-[16px] lg:text-[18px] leading-[1.8] text-zinc-100 whitespace-pre-wrap selection:bg-tactical-500/40 selection:text-white max-w-5xl font-medium tracking-wide">
+                    {/* Editor Content */}
+                    <div className="relative z-10 mono text-[15px] md:text-[16px] leading-[1.8] text-zinc-100 whitespace-pre-wrap selection:bg-tactical-500/30 selection:text-white max-w-4xl font-normal tracking-wide">
                       {result.improvedPrompt}
                     </div>
                   </div>
                 </div>
 
                 {/* Status Bar */}
-                <div className="h-9 md:h-10 border-t border-white/5 px-6 md:px-8 flex items-center justify-between bg-zinc-950/60 text-[8px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
-                  <div className="flex items-center space-x-4 md:space-x-6">
-                    <div className="flex items-center space-x-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-tactical-500" />
-                      <span className="hidden xs:inline">Analysis Verified</span>
-                      <span className="xs:hidden">Verified</span>
+                <div className="h-8 border-t border-white/5 px-4 flex items-center justify-between bg-zinc-950 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 text-emerald-500/80">
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                      <span>No Issues Found</span>
                     </div>
-                    <div className="hidden md:block">Logic Integrity: 99.4%</div>
                   </div>
-                  <div className="flex items-center space-x-3 md:space-x-4">
-                    <span>{wordCount} Words</span>
-                    <span className="opacity-30">|</span>
-                    <span className="text-zinc-400">Stable</span>
+                  <div className="flex items-center space-x-4 opacity-50">
+                    <span>Ln {lineCount}, Col 1</span>
+                    <span>Spaces: 2</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-center pt-12 md:pt-16">
+            <div className="flex justify-center pt-16 md:pt-24 animate-reveal [animation-delay:600ms]">
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="px-8 md:px-10 py-3 md:py-4 rounded-full border border-white/10 text-[9px] md:text-[11px] font-black text-zinc-500 hover:text-zinc-100 hover:border-white/20 uppercase tracking-[0.4em] transition-all flex items-center space-x-3 group bg-zinc-900/30 backdrop-blur-sm"
+                className="px-10 py-4 rounded-full border border-white/5 text-[10px] font-black text-zinc-500 hover:text-zinc-100 hover:border-white/20 uppercase tracking-[0.3em] transition-all flex items-center space-x-3 group bg-zinc-900/40 backdrop-blur-sm hover:translate-y-[-2px] hover:shadow-lg"
               >
-                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 transform group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 15l7-7 7 7" /></svg>
-                <span>Back to Workbench</span>
+                <svg className="w-4 h-4 transform group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 15l7-7 7 7" /></svg>
+                <span>Return to Top</span>
               </button>
             </div>
           </div>
