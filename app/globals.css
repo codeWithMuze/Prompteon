@@ -14,29 +14,66 @@ body {
   color: #fafafa;
   -webkit-font-smoothing: antialiased;
   margin: 0;
+  background-color: #0a0a0c;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(88, 129, 87, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(163, 177, 138, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(52, 78, 65, 0.05) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(88, 129, 87, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
-h1, h2, h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  letter-spacing: -0.02em;
+.text-gradient {
+  background: linear-gradient(135deg, #dad7cd 0%, #a3b18a 50%, #344e41 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-panel {
+  background: rgba(20, 20, 22, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.glass-panel-heavy {
+  background: rgba(10, 10, 12, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-jakarta), sans-serif;
+  letter-spacing: -0.03em;
 }
 
 .tool-border {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .tool-bg {
-  background: linear-gradient(135deg, rgba(24, 24, 27, 0.9) 0%, rgba(9, 9, 11, 0.95) 100%);
-  backdrop-filter: blur(12px);
+  @apply glass-panel-heavy;
 }
 
 .mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono), monospace;
 }
 
 @keyframes sweep {
-  0% { transform: translateX(-100%) skewX(-15deg); }
-  50%, 100% { transform: translateX(200%) skewX(-15deg); }
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  50%,
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
 }
 
 .btn-sweep {
@@ -51,24 +88,34 @@ h1, h2, h3 {
   left: 0;
   width: 30%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
   animation: sweep 3s infinite;
 }
 
 .grid-background {
   background-size: 20px 20px;
-  background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 10px;
+}
