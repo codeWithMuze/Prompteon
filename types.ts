@@ -63,6 +63,10 @@ export interface PromptHistoryItem {
   improved_prompt: string;
   score: number;
   created_at: string;
+  score_breakdown?: PromptMetrics;
+  model?: string;
+  duration_ms?: number;
+  status?: string;
 }
 
 export interface AppState {

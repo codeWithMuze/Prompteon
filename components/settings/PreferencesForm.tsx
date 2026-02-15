@@ -47,24 +47,7 @@ export const PreferencesForm: React.FC = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8 max-w-lg">
-                <div className="space-y-4">
-                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider">Interface Theme</label>
-                    <div className="grid grid-cols-3 gap-4">
-                        {['light', 'dark', 'system'].map((t) => (
-                            <button
-                                key={t}
-                                type="button"
-                                onClick={() => setTheme(t as any)}
-                                className={`py-3 px-4 rounded-xl border text-sm font-bold capitalize transition-all ${theme === t
-                                        ? 'bg-white text-black border-white'
-                                        : 'bg-zinc-950/50 text-zinc-500 border-white/10 hover:border-white/20 hover:text-zinc-300'
-                                    }`}
-                            >
-                                {t}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+
 
                 <div className="space-y-4">
                     <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider">Default AI Model</label>

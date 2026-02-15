@@ -68,11 +68,25 @@ function Workbench() {
     }
 
     setState(prev => ({ ...prev, isAnalyzing: true, error: null }));
+    const startTime = Date.now();
+
     try {
       const result = await analyzePrompt(state.originalPrompt, state.mode);
+      const duration = Date.now() - startTime;
 
       if (state.user) {
-        await savePromptToHistory(state.user.id, state.originalPrompt, result.improvedPrompt, result.score);
+        await savePromptToHistory(
+          state.user.id,
+          state.originalPrompt,
+          result.improvedPrompt,
+          result.score,
+          {
+            score_breakdown: result.metrics,
+            model: state.user.preferences?.model || 'gpt-4',
+            duration_ms: duration,
+            status: 'success'
+          }
+        );
         const history = await fetchUserHistory(state.user.id);
         setState(prev => ({ ...prev, history }));
       }
@@ -84,6 +98,7 @@ function Workbench() {
       }, 200);
     } catch (err: any) {
       setState(prev => ({ ...prev, isAnalyzing: false, error: err.message }));
+      // Optional: Log failed attempts if needed, but usually we just show error.
     }
   };
 
@@ -220,6 +235,77 @@ function Workbench() {
           {state.result && (
             <div id="results" className="mt-20 animate-in fade-in slide-in-from-bottom-10 duration-1000">
               <ResultsDashboard result={state.result} />
+            </div>
+          )}
+
+          {/* History Section */}
+          {state.user && state.history.length > 0 && (
+            <div className="mt-32 border-t border-white/5 pt-16">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-xl font-black text-zinc-100 uppercase tracking-widest">Recent Forge History</h3>
+                  <p className="text-zinc-500 text-xs mt-1">Your latest architectural refinements.</p>
+                </div>
+                <button className="text-xs font-bold text-tactical-500 hover:text-tactical-400 uppercase tracking-wider transition-colors">
+                  View All History →
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                {state.history.slice(0, 5).map((item) => (
+                  <div key={item.id} className="group relative bg-zinc-950/30 border border-white/5 hover:border-tactical-500/30 rounded-2xl p-6 transition-all hover:bg-zinc-900/40">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${item.score >= 90 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                          item.score >= 70 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                            'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                          }`}>
+                          Score: {item.score}
+                        </div>
+                        <span className="text-[10px] text-zinc-500 font-mono">
+                          {new Date(item.created_at).toLocaleDateString()} • {new Date(item.created_at).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => {
+                            setState(prev => ({ ...prev, originalPrompt: item.original_prompt }));
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="p-2 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-white transition-colors"
+                          title="Re-run Prompt"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (!confirm('Delete this history item?')) return;
+                            try {
+                              await fetch(`/api/history/${item.id}`, { method: 'DELETE' });
+                              const updated = await fetchUserHistory(state.user!.id);
+                              setState(prev => ({ ...prev, history: updated }));
+                            } catch (e) { console.error(e); }
+                          }}
+                          className="p-2 hover:bg-rose-500/10 rounded-lg text-zinc-600 hover:text-rose-400 transition-colors"
+                          title="Delete"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Input</p>
+                        <p className="text-sm text-zinc-400 line-clamp-2 font-mono">{item.original_prompt}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-tactical-500 uppercase tracking-widest mb-2">Refined Output</p>
+                        <p className="text-sm text-zinc-300 line-clamp-2 font-mono">{item.improved_prompt}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

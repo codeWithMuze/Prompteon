@@ -2,33 +2,53 @@
 import { supabase } from './supabaseClient';
 import { PromptHistoryItem } from '../types';
 
-export const savePromptToHistory = async (userId: string, original: string, improved: string, score: number) => {
-  const { error } = await supabase
-    .from('prompts')
-    .insert([
-      { 
-        user_id: userId, 
-        original_prompt: original, 
-        improved_prompt: improved, 
-        score: score 
-      }
-    ]);
+export const savePromptToHistory = async (
+  userId: string,
+  original: string,
+  improved: string,
+  score: number,
+  details?: {
+    score_breakdown?: any;
+    model?: string;
+    duration_ms?: number;
+    status?: string;
+  }
+) => {
+  try {
+    const res = await fetch('/api/history/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        original_prompt: original,
+        improved_prompt: improved,
+        score,
+        score_breakdown: details?.score_breakdown,
+        model: details?.model,
+        duration_ms: details?.duration_ms,
+        status: details?.status
+      })
+    });
 
-  if (error) console.error('Error saving prompt history:', error);
+    if (!res.ok) {
+      const err = await res.json();
+      console.error('Error saving history via API:', err);
+    }
+  } catch (error) {
+    console.error('Network error saving history:', error);
+  }
 };
 
 export const fetchUserHistory = async (userId: string): Promise<PromptHistoryItem[]> => {
-  const { data, error } = await supabase
-    .from('prompts')
-    .select('id, original_prompt, improved_prompt, score, created_at')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(10);
-
-  if (error) {
-    console.error('Error fetching user history:', error);
+  try {
+    const res = await fetch('/api/history/recent');
+    if (!res.ok) {
+      console.error('Failed to fetch history API');
+      return [];
+    }
+    const json = await res.json();
+    return json.data || [];
+  } catch (error) {
+    console.error('Network error fetching history:', error);
     return [];
   }
-
-  return data || [];
 };
