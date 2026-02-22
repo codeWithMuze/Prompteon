@@ -1,4 +1,4 @@
-// File: /Users/muzammil/Downloads/prompteon/app/page.tsx
+// File: /Users/muzammil/Documents/Projects/Prompteon/app/page.tsx
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
