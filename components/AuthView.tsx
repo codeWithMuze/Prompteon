@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AuthMode, User } from '../types';
 import { supabase } from '../services/supabaseClient';
+import { Logo } from './Logo';
 
 interface AuthViewProps {
   initialMode: AuthMode;
@@ -125,10 +126,8 @@ export const AuthView: React.FC<AuthViewProps> = ({ initialMode, onSuccess, onBa
           <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-zinc-950 to-transparent opacity-50 pointer-events-none" />
 
           <div className="relative z-10 space-y-12">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-zinc-100 rounded-2xl flex items-center justify-center shadow-xl">
-                <div className="w-5 h-5 bg-zinc-950 rounded-sm transform rotate-45" />
-              </div>
+            <div className="flex items-center space-x-6">
+              <Logo size="lg" animate={true} />
               <div>
                 <h3 className="text-xl font-black text-white tracking-tight">Prompteon</h3>
                 <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">The Engine of Choice</p>
