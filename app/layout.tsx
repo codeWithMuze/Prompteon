@@ -35,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable}`}>
-      <body className="antialiased bg-[#050505] text-[#fafafa] min-h-screen font-sans selection:bg-emerald-500/30 selection:text-white">
+      <body className="antialiased text-[#fafafa] min-h-screen font-sans selection:bg-emerald-500/30 selection:text-white">
         <AuthProvider>
           {children}
         </AuthProvider>

@@ -1,4 +1,16 @@
 {
+  "components/Layout.tsx -> ./NeuralBackground": {
+    "id": "components/Layout.tsx -> ./NeuralBackground",
+    "files": [
+      "static/chunks/_app-pages-browser_components_NeuralBackground_tsx.js"
+    ]
+  },
+  "components/Layout.tsx -> ./StarsBackground": {
+    "id": "components/Layout.tsx -> ./StarsBackground",
+    "files": [
+      "static/chunks/_app-pages-browser_components_StarsBackground_tsx.js"
+    ]
+  },
   "node_modules/@supabase/auth-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
     "id": "node_modules/@supabase/auth-js/dist/module/lib/helpers.js -> @supabase/node-fetch",
     "files": []

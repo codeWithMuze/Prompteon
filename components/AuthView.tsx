@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { AuthMode, User } from '../types';
 import { supabase } from '../services/supabaseClient';
 import { Logo } from './Logo';
@@ -93,7 +94,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ initialMode, onSuccess, onBa
       // Checking original... yes it was just /api/auth/login.
       // I will keep it as is to avoid breaking unrelated signup flow, assuming logic upstream handles it or this is just login.
 
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -128,10 +129,10 @@ export const AuthView: React.FC<AuthViewProps> = ({ initialMode, onSuccess, onBa
           <div className="relative z-10 space-y-12">
             <div className="flex items-center space-x-6">
               <Logo size="lg" animate={true} />
-              <div>
+              <Link href="/" className="hover:opacity-80 transition-opacity">
                 <h3 className="text-xl font-black text-white tracking-tight">Prompteon</h3>
                 <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em]">The Engine of Choice</p>
-              </div>
+              </Link>
             </div>
 
             <div className="space-y-6">

@@ -6,8 +6,8 @@ interface LogoProps {
   animate?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({ 
-  size = 'md', 
+export const Logo: React.FC<LogoProps> = ({
+  size = 'md',
   className = '',
   animate = true
 }) => {
@@ -40,7 +40,7 @@ export const Logo: React.FC<LogoProps> = ({
     <div className={`relative group/logo ${className}`}>
       {/* Glow effect */}
       <div className={`absolute -inset-3 bg-tactical-500/20 blur-xl rounded-full opacity-0 ${animate ? 'group-hover/logo:opacity-100' : ''} transition-opacity duration-500`}></div>
-      
+
       {/* Box */}
       <div className={`${containerSize} bg-zinc-950 border border-zinc-800 flex items-center justify-center shadow-2xl relative overflow-hidden ${animate ? 'group-hover/logo:border-tactical-500/50' : ''} transition-colors`}>
         {/* Subtle inner gradient */}
@@ -60,3 +60,4 @@ export const Logo: React.FC<LogoProps> = ({
     </div>
   );
 };
+

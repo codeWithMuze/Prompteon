@@ -1,326 +1,211 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
+import Link from 'next/link';
 import { Layout } from '../components/Layout';
-import { PromptMode, AppState, ModeDetails, User } from '../types';
-import { analyzePrompt } from '../services/geminiService';
-import { ResultsDashboard } from '../components/ResultsDashboard';
-import { AuthView } from '../components/AuthView';
-import { supabase } from '../services/supabaseClient';
-import { fetchUserHistory, savePromptToHistory } from '../services/historyService';
 
-import { AuthProvider, useAuth } from '../components/AuthProvider';
+const features = [
+  {
+    title: 'Prompt Optimization',
+    description: 'Automatically refine and restructure your prompts for maximum clarity, precision, and AI comprehension.',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'AI Suggestions',
+    description: 'Get intelligent, context-aware suggestions to enhance your prompt engineering workflow in real time.',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Prompt Library',
+    description: 'Access a curated collection of battle-tested prompt templates across categories and use cases.',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Real-time Feedback',
+    description: 'Receive instant scoring and detailed analysis metrics on clarity, specificity, and task alignment.',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    ),
+  },
+];
 
-function Workbench() {
-  const { user, login, logout } = useAuth();
-  const [state, setState] = useState<AppState>({
-    originalPrompt: '',
-    mode: PromptMode.GENERAL,
-    isAnalyzing: false,
-    result: null,
-    error: null,
-    user: null, // Initial local state, will sync with context
-    currentView: 'workbench',
-    history: [],
-  });
+const steps = [
+  {
+    step: '01',
+    title: 'Enter Your Prompt',
+    description: 'Paste or type your raw prompt into the Neural Forge workbench terminal.',
+  },
+  {
+    step: '02',
+    title: 'AI Improves It',
+    description: 'Our engine analyzes structure, clarity, and intent — then architecturally refines your prompt.',
+  },
+  {
+    step: '03',
+    title: 'Get Better Results',
+    description: 'Use the optimized prompt to unlock dramatically improved AI outputs across any model.',
+  },
+];
 
-  // Sync context user to local state for now (refactoring step)
-  useEffect(() => {
-    if (user) {
-      setState(prev => ({ ...prev, user }));
-      fetchUserHistory(user.id).then(history => setState(prev => ({ ...prev, history })));
-    } else {
-      setState(prev => ({ ...prev, user: null }));
-    }
-  }, [user]);
-
-  // The rest of the component...
-  // Simplify handleForge slightly if needed, but keeping logic for now
-  // ...
-
-  const [loadingStep, setLoadingStep] = useState(0);
-  const loadingMessages = [
-    "Priming Neural Forge...",
-    "Scanning Syntax Logic...",
-    "Injecting Structural Integrity...",
-    "Optimizing Token Density...",
-    "Calibrating Task Alignment...",
-    "Finalizing Semantic Audit..."
-  ];
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let interval: any;
-    if (state.isAnalyzing) {
-      interval = setInterval(() => {
-        setLoadingStep(prev => (prev + 1) % loadingMessages.length);
-      }, 1500);
-    }
-    return () => clearInterval(interval);
-  }, [state.isAnalyzing]);
-
-  const handleForge = async () => {
-    if (!state.originalPrompt.trim()) {
-      setState(prev => ({ ...prev, error: 'Provide raw input to begin forging.' }));
-      return;
-    }
-
-    setState(prev => ({ ...prev, isAnalyzing: true, error: null }));
-    const startTime = Date.now();
-
-    try {
-      const result = await analyzePrompt(state.originalPrompt, state.mode);
-      const duration = Date.now() - startTime;
-
-      if (state.user) {
-        await savePromptToHistory(
-          state.user.id,
-          state.originalPrompt,
-          result.improvedPrompt,
-          result.score,
-          {
-            score_breakdown: result.metrics,
-            model: state.user.preferences?.model || 'gpt-4',
-            duration_ms: duration,
-            status: 'success'
-          }
-        );
-        const history = await fetchUserHistory(state.user.id);
-        setState(prev => ({ ...prev, history }));
-      }
-
-      setState(prev => ({ ...prev, isAnalyzing: false, result }));
-
-      setTimeout(() => {
-        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
-      }, 200);
-    } catch (err: any) {
-      setState(prev => ({ ...prev, isAnalyzing: false, error: err.message }));
-      // Optional: Log failed attempts if needed, but usually we just show error.
-    }
+export default function LandingPage() {
+  const scrollToFeatures = () => {
+    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <Layout
-      history={state.history}
-      onSignInClick={() => setState(prev => ({ ...prev, currentView: 'auth' }))}
-    >
-      {state.currentView === 'auth' ? (
-        <AuthView
-          initialMode="signin"
-          onSuccess={(user) => {
-            login(user);
-            setState(prev => ({ ...prev, currentView: 'workbench' }));
-          }}
-          onBack={() => setState(prev => ({ ...prev, currentView: 'workbench' }))}
-        />
-      ) : (
-        <div className="w-full max-w-6xl mx-auto flex flex-col min-h-[calc(100vh-80px)] justify-center">
-          <div className="text-center space-y-4 pt-8 md:pt-0 mb-8 md:mb-12">
-            <div className="inline-flex items-center space-x-2.5 px-3 py-1.5 md:px-4 md:py-2 bg-zinc-900/40 backdrop-blur-md border border-tactical-500/20 rounded-full shadow-[0_0_15px_-3px_rgba(88,129,87,0.3)] hover:border-tactical-500/40 hover:bg-zinc-900/60 transition-all duration-300 group cursor-default shadow-lg shadow-tactical-900/10">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tactical-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-tactical-500 shadow-[0_0_10px_#588157]"></span>
-              </span >
-              <span className="text-[10px] md:text-[11px] font-bold text-zinc-400 tracking-[0.2em] uppercase group-hover:text-zinc-200 transition-colors">
-                Neural <span className="text-tactical-300">Bridge</span> <span className="text-tactical-400 drop-shadow-[0_0_8px_rgba(88,129,87,0.5)]">Active</span>
-              </span>
-            </div >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-zinc-100 tracking-tighter leading-none">
-              Architect Precision <br /> <span className="text-gradient">AI Prompts</span>
-            </h1>
-            <p className="text-zinc-400 text-sm md:text-lg max-w-2xl mx-auto font-medium">
-              Transform basic inputs into architectural-grade prompts with industrial analysis.
-            </p>
-          </div >
-
-          <div className="relative group w-full">
-            <div className="absolute inset-0 bg-tactical-800 rounded-[2.5rem] blur-xl opacity-20"></div>
-            <div className="relative tool-bg tool-border rounded-[2rem] shadow-2xl shadow-tactical-900/30 overflow-hidden bg-[#09090b]">
-              <div className="h-10 md:h-12 border-b border-white/5 px-4 md:px-6 flex items-center justify-between bg-zinc-950/30">
-                <div className="flex space-x-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-                </div>
-                <span className="text-[9px] md:text-[10px] font-black text-zinc-500 uppercase tracking-widest">Workbench Terminal // src_forge.v1</span>
-                <span className="text-[9px] md:text-[10px] font-mono text-zinc-600">STABLE_RELEASE</span>
-              </div>
-
-              {/* Editor Status Bar */}
-              <div className="flex items-center justify-between px-4 md:px-6 py-1.5 border-b border-white/5 bg-zinc-950/50 text-[9px] md:text-[10px] text-zinc-500 font-mono">
-                <div className="flex space-x-4">
-                  <span>main.prompt</span>
-                  <span>UTF-8</span>
-                </div>
-                <div className="flex space-x-4">
-                  <span>Ln 1, Col 1</span>
-                  <span>Forge AI</span>
-                </div>
-              </div>
-
-              <div className="p-0 relative group">
-                <div className="absolute left-0 top-0 bottom-0 w-10 md:w-12 border-r border-white/5 bg-zinc-950/20 text-right pr-2 md:pr-3 pt-4 md:pt-6 text-zinc-700 font-mono text-xs md:text-sm leading-7 md:leading-8 select-none">
-                  1<br />2<br />3<br />4<br />5
-                </div>
-                <textarea
-                  className="w-full h-64 md:h-80 bg-transparent text-zinc-300 placeholder-zinc-700 focus:outline-none resize-none mono text-sm md:text-base leading-7 md:leading-8 pl-12 md:pl-16 pr-6 md:pr-8 pt-4 md:pt-6 selection:bg-tactical-500/20"
-                  placeholder="// Initialize prompt sequence..."
-                  value={state.originalPrompt}
-                  onChange={(e) => setState(prev => ({ ...prev, originalPrompt: e.target.value }))}
-                />
-              </div>
-
-              <div className="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 border-t border-white/5 gap-4 md:gap-6 bg-zinc-900/40">
-                <div className="w-full md:w-80 relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="w-full h-10 md:h-12 bg-zinc-950/50 border border-white/10 rounded-xl px-4 md:px-5 flex items-center justify-between hover:bg-zinc-900 hover:border-tactical-500/30 transition-all group"
-                  >
-                    <div className="text-left">
-                      <div className="text-xs md:text-[13px] font-bold text-zinc-100">{state.mode}</div>
-                      <div className="text-[8px] md:text-[9px] text-zinc-500 uppercase tracking-widest">Forge Profile</div>
-                    </div>
-                    <svg className={`w-4 h-4 text-zinc-600 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                  {isDropdownOpen && (
-                    <div className="absolute bottom-full mb-4 w-full bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
-                      {Object.values(PromptMode).map(m => (
-                        <button
-                          key={m}
-                          onClick={() => { setState(prev => ({ ...prev, mode: m })); setIsDropdownOpen(false); }}
-                          className="w-full px-6 py-4 text-left hover:bg-zinc-800 transition-colors border-b border-white/5 last:border-0"
-                        >
-                          <div className="text-xs font-bold text-zinc-100">{m}</div>
-                          <div className="text-[9px] text-zinc-500 truncate">{ModeDetails[m]}</div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  onClick={handleForge}
-                  disabled={state.isAnalyzing}
-                  className="h-10 md:h-12 w-full md:w-auto px-8 md:px-10 bg-gradient-to-r from-tactical-500 to-tactical-600 text-white rounded-xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-tactical-900/20 active:scale-95 disabled:opacity-50 disabled:shadow-none btn-sweep whitespace-nowrap"
-                >
-                  {state.isAnalyzing ? 'Processing...' : 'Initialize Forge'}
-                </button>
-              </div>
-            </div>
-
-            {state.isAnalyzing && (
-              <div className="absolute inset-0 bg-zinc-950/90 backdrop-blur-xl flex flex-col items-center justify-center space-y-8 z-50 rounded-[2rem]">
-                <div className="w-24 h-24 rounded-full border-t-2 border-tactical-500 animate-spin" />
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-zinc-100 mb-2">{loadingMessages[loadingStep]}</p>
-                  <div className="flex space-x-1 justify-center">
-                    {[0, 1, 2].map(i => (
-                      <div key={i} className={`w-1.5 h-1.5 rounded-full bg-tactical-500 ${loadingStep % 3 === i ? 'opacity-100 scale-125' : 'opacity-20'} transition-all`} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+    <Layout history={[]} onSignInClick={() => {}}>
+      {/* ── Hero Section ───────────────────────────────────────────── */}
+      <section className="w-full max-w-6xl mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center">
+        <div className="animate-reveal space-y-6">
+          <div className="inline-flex items-center space-x-2.5 px-4 py-2 bg-zinc-900/40 backdrop-blur-md border border-tactical-500/20 rounded-full shadow-lg shadow-tactical-900/10 hover:border-tactical-500/40 hover:bg-zinc-900/60 transition-all duration-300 group cursor-default">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tactical-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-tactical-500 shadow-[0_0_10px_#588157]"></span>
+            </span>
+            <span className="text-[10px] md:text-[11px] font-bold text-zinc-400 tracking-[0.2em] uppercase group-hover:text-zinc-200 transition-colors">
+              Neural <span className="text-tactical-300">Forge</span> <span className="text-tactical-400 drop-shadow-[0_0_8px_rgba(88,129,87,0.5)]">Online</span>
+            </span>
           </div>
 
-          {
-            state.error && (
-              <div className="mt-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs font-bold text-center">
-                {state.error}
-              </div>
-            )
-          }
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-zinc-100 tracking-tighter leading-[0.9]">
+            Supercharge Your AI <br />
+            <span className="text-gradient">Prompts with Prompteon</span>
+          </h1>
 
-          {
-            state.result && (
-              <div id="results" className="mt-20 animate-in fade-in slide-in-from-bottom-10 duration-1000">
-                <ResultsDashboard result={state.result} />
-              </div>
-            )
-          }
+          <p className="text-zinc-400 text-sm md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
+            Create, refine, and manage high-quality prompts effortlessly.
+            Transform raw instructions into architectural-grade AI inputs.
+          </p>
 
-          {/* History Section */}
-          {
-            state.user && state.history.length > 0 && (
-              <div className="mt-16 md:mt-24 border-t border-white/5 pt-12 md:pt-16 pb-12">
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h3 className="text-lg md:text-xl font-black text-zinc-100 uppercase tracking-widest">Recent Forge History</h3>
-                    <p className="text-zinc-500 text-xs mt-1">Your latest architectural refinements.</p>
-                  </div>
-                  <button className="text-xs font-bold text-tactical-500 hover:text-tactical-400 uppercase tracking-wider transition-colors">
-                    View All History →
-                  </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Link
+              href="/app"
+              className="h-12 px-10 bg-gradient-to-r from-tactical-500 to-tactical-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-tactical-900/20 active:scale-95 btn-sweep inline-flex items-center justify-center"
+            >
+              Start Now
+            </Link>
+            <button
+              onClick={scrollToFeatures}
+              className="h-12 px-10 bg-zinc-900/50 border border-white/10 text-zinc-300 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-zinc-800/60 hover:border-tactical-500/30 transition-all active:scale-95 inline-flex items-center justify-center gap-2"
+            >
+              View Features
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Features Section ───────────────────────────────────────── */}
+      <section id="features" className="w-full max-w-6xl mx-auto py-24 md:py-32">
+        <div className="text-center mb-16 space-y-4">
+          <span className="text-[10px] font-black text-tactical-500 uppercase tracking-[0.3em]">
+            Core Capabilities
+          </span>
+          <h2 className="text-3xl md:text-5xl font-black text-zinc-100 tracking-tighter">
+            Built for <span className="text-gradient">Precision</span>
+          </h2>
+          <p className="text-zinc-500 text-sm md:text-base max-w-xl mx-auto">
+            Every feature is engineered to elevate your prompt engineering workflow.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {features.map((feature, index) => (
+            <div
+              key={feature.title}
+              className="glass-card rounded-2xl p-8 group cursor-default"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="w-12 h-12 rounded-xl bg-tactical-500/10 border border-tactical-500/20 flex items-center justify-center text-tactical-400 mb-6 group-hover:bg-tactical-500/20 group-hover:border-tactical-500/40 transition-all">
+                {feature.icon}
+              </div>
+              <h3 className="text-lg font-black text-zinc-100 mb-3 tracking-tight">
+                {feature.title}
+              </h3>
+              <p className="text-sm text-zinc-500 leading-relaxed">
+                {feature.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── How It Works Section ───────────────────────────────────── */}
+      <section className="w-full max-w-6xl mx-auto py-24 md:py-32 border-t border-white/5">
+        <div className="text-center mb-16 space-y-4">
+          <span className="text-[10px] font-black text-tactical-500 uppercase tracking-[0.3em]">
+            Workflow
+          </span>
+          <h2 className="text-3xl md:text-5xl font-black text-zinc-100 tracking-tighter">
+            How It <span className="text-gradient">Works</span>
+          </h2>
+          <p className="text-zinc-500 text-sm md:text-base max-w-xl mx-auto">
+            Three steps from raw input to architectural-grade output.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {steps.map((item, index) => (
+            <div key={item.step} className="relative">
+              {/* Connector line */}
+              {index < steps.length - 1 && (
+                <div className="hidden md:block absolute top-10 left-full w-full h-px bg-gradient-to-r from-tactical-500/30 to-transparent z-0" />
+              )}
+              <div className="glass-panel rounded-2xl p-8 relative z-10">
+                <div className="text-5xl font-black text-tactical-500/20 mb-4 leading-none">
+                  {item.step}
                 </div>
-
-                <div className="grid grid-cols-1 gap-4">
-                  {state.history.slice(0, 5).map((item) => (
-                    <div key={item.id} className="group relative bg-zinc-950/30 border border-white/5 hover:border-tactical-500/30 rounded-2xl p-6 transition-all hover:bg-zinc-900/40">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex items-center space-x-3">
-                          <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${item.score >= 90 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                            item.score >= 70 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                              'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                            }`}>
-                            Score: {item.score}
-                          </div>
-                          <span className="text-[10px] text-zinc-500 font-mono">
-                            {new Date(item.created_at).toLocaleDateString()} • {new Date(item.created_at).toLocaleTimeString()}
-                          </span>
-                        </div>
-                        <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => {
-                              setState(prev => ({ ...prev, originalPrompt: item.original_prompt }));
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                            className="p-2 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                            title="Re-run Prompt"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                          </button>
-                          <button
-                            onClick={async () => {
-                              if (!confirm('Delete this history item?')) return;
-                              try {
-                                await fetch(`/api/history/${item.id}`, { method: 'DELETE' });
-                                const updated = await fetchUserHistory(state.user!.id);
-                                setState(prev => ({ ...prev, history: updated }));
-                              } catch (e) { console.error(e); }
-                            }}
-                            className="p-2 hover:bg-rose-500/10 rounded-lg text-zinc-600 hover:text-rose-400 transition-colors"
-                            title="Delete"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div>
-                          <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Input</p>
-                          <p className="text-sm text-zinc-400 line-clamp-2 font-mono">{item.original_prompt}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-bold text-tactical-500 uppercase tracking-widest mb-2">Refined Output</p>
-                          <p className="text-sm text-zinc-300 line-clamp-2 font-mono">{item.improved_prompt}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <h3 className="text-lg font-black text-zinc-100 mb-3 tracking-tight">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-zinc-500 leading-relaxed">
+                  {item.description}
+                </p>
               </div>
-            )
-          }
-        </div >
-      )
-      }
-    </Layout >
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CTA Section ────────────────────────────────────────────── */}
+      <section className="w-full max-w-4xl mx-auto py-24 md:py-32">
+        <div className="glass-panel-heavy rounded-[2rem] p-12 md:p-16 text-center relative overflow-hidden">
+          {/* Background glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(88,129,87,0.1)_0%,_transparent_70%)]" />
+
+          <div className="relative z-10 space-y-8">
+            <h2 className="text-3xl md:text-4xl font-black text-zinc-100 tracking-tighter">
+              Start improving your <br />
+              <span className="text-gradient">prompts today</span>
+            </h2>
+            <p className="text-zinc-500 text-sm md:text-base max-w-md mx-auto">
+              Join the Neural Forge and transform the way you communicate with AI.
+            </p>
+            <Link
+              href="/app"
+              className="h-12 px-12 bg-gradient-to-r from-tactical-500 to-tactical-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-tactical-900/20 active:scale-95 btn-sweep inline-flex items-center justify-center"
+            >
+              Launch Workbench
+            </Link>
+          </div>
+        </div>
+      </section>
+    </Layout>
   );
-}
-
-export default function Page() {
-  return <Workbench />;
 }

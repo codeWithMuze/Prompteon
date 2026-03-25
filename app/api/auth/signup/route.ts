@@ -3,8 +3,6 @@ import { signToken, setAuthCookies } from '../../../../lib/auth';
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client
-// Note: In a real production app, use server-side Supabase client with SERVICE_ROLE key for admin tasks if needed.
-// Here we use the public client to verify credentials.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -17,26 +15,26 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
         }
 
-        // 1. Verify credentials against Supabase
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // 1. Create account with Supabase
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
         });
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 401 });
+            return NextResponse.json({ error: error.message }, { status: 400 });
         }
 
         if (!data.user) {
-            return NextResponse.json({ error: 'User not found' }, { status: 401 });
+            return NextResponse.json({ error: 'Failed to create user' }, { status: 400 });
         }
 
         // 2. Generate our own secure tokens
         const user = {
             id: data.user.id,
             email: data.user.email,
-            name: data.user.user_metadata.name,
-            plan: data.user.user_metadata.plan || 'free',
+            name: data.user.user_metadata?.name || null,
+            plan: data.user.user_metadata?.plan || 'free',
         };
 
         // Sign Access Token (15m)
@@ -50,6 +48,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ user });
     } catch (error) {
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error during signup' }, { status: 500 });
     }
 }
