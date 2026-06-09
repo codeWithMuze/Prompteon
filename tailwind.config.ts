@@ -33,6 +33,15 @@ const config: Config = {
         mono: ['var(--font-mono)', 'monospace'],
         display: ['var(--font-jakarta)', 'sans-serif'],
       },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 30s linear infinite',
+      },
     },
   },
   plugins: [],

@@ -1,48 +1,102 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { PromptMetrics } from '../types';
 
 interface MetricsCardProps {
   metrics: PromptMetrics;
 }
 
+// ── Tooltip content per metric ───────────────────────────────────────
+const METRIC_TIPS: Record<string, string> = {
+  Clarity: "Be specific about what you want. Bad: 'write code'. Good: 'write a Python function that sorts a list by date'.",
+  Details: "Add examples, constraints, or desired format to guide the AI precisely.",
+  Background: "Explain who you are or why you need this — context helps the AI tailor its response.",
+  Focus: "Limit your prompt to one clear objective. Multi-goal prompts confuse AI.",
+  Structure: "Use numbered steps or bullet points if needed. Organized prompts get organized answers.",
+  Boundaries: "Tell the AI what NOT to do or what to avoid. Constraints sharpen output.",
+};
+
+function scoreBadgeColor(value: number): string {
+  if (value <= 30) return 'bg-rose-500/15 text-rose-400 border-rose-500/25';
+  if (value <= 60) return 'bg-amber-500/15 text-amber-400 border-amber-500/25';
+  return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25';
+}
+
+function scoreBarColor(value: number): string {
+  if (value <= 30) return 'from-rose-500 to-rose-400';
+  if (value <= 60) return 'from-amber-500 to-amber-400';
+  return 'from-emerald-400 to-emerald-300';
+}
+
 const HealthWidget: React.FC<{
   label: string;
   value: number;
   desc: string;
-}> = ({ label, value, desc }) => (
-  <div className="glass-card group relative overflow-hidden rounded-[24px] p-6 hover:border-white/10">
-    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+}> = ({ label, value, desc }) => {
+  const [showTip, setShowTip] = useState(false);
 
-    <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
-      <div className="flex justify-between items-start">
-        <div className="space-y-1.5">
-          <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">{label}</span>
-          <div className="h-0.5 w-6 bg-zinc-800 rounded-full group-hover:bg-tactical-500 group-hover:w-10 transition-all duration-500 delay-75" />
-        </div>
-        <div className="flex items-baseline space-x-1">
-          <span className="text-3xl font-black text-zinc-100 tabular-nums leading-none tracking-tight group-hover:text-glow transition-all">{value}</span>
-          <span className="text-[10px] font-bold text-zinc-600 uppercase">%</span>
-        </div>
-      </div>
+  return (
+    <div className="glass-card group relative overflow-hidden rounded-[24px] p-6 hover:border-white/10">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-      <div className="space-y-4">
-        <div className="h-1.5 w-full bg-zinc-950/50 rounded-full overflow-hidden shadow-inner ring-1 ring-white/5">
-          <div
-            className="h-full bg-gradient-to-r from-zinc-400 to-zinc-200 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,255,255,0.2)]"
-            style={{ width: `${value}%` }}
-          />
+      <div className="relative z-10 flex flex-col h-full justify-between space-y-6">
+        <div className="flex justify-between items-start">
+          <div className="space-y-1.5 flex items-center gap-2">
+            <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">{label}</span>
+            {/* Tooltip trigger */}
+            <div className="relative">
+              <button
+                onMouseEnter={() => setShowTip(true)}
+                onMouseLeave={() => setShowTip(false)}
+                onClick={() => setShowTip(!showTip)}
+                className="w-4 h-4 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-[8px] text-zinc-600 hover:text-zinc-400 transition-colors flex-shrink-0"
+              >?</button>
+              {showTip && (
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-56 p-3 bg-zinc-900 border border-white/10 rounded-lg shadow-xl text-[11px] text-zinc-400 leading-relaxed z-50 pointer-events-none">
+                  {METRIC_TIPS[label] || desc}
+                </div>
+              )}
+            </div>
+          </div>
+          {/* Colored badge */}
+          <span className={`px-2.5 py-1 rounded-md text-xs font-black border ${scoreBadgeColor(value)}`}>
+            {value}%
+          </span>
         </div>
 
-        <p className="text-[13px] text-zinc-400 font-medium leading-relaxed group-hover:text-zinc-300 transition-colors min-h-[40px]">
-          {desc}
-        </p>
+        <div className="space-y-4">
+          <div className="h-1.5 w-full bg-zinc-950/50 rounded-full overflow-hidden shadow-inner ring-1 ring-white/5">
+            <div
+              className={`h-full bg-gradient-to-r ${scoreBarColor(value)} rounded-full transition-all duration-1000 ease-out`}
+              style={{ width: `${value}%` }}
+            />
+          </div>
+
+          <p className="text-[13px] text-zinc-400 font-medium leading-relaxed group-hover:text-zinc-300 transition-colors min-h-[40px]">
+            {desc}
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const MetricsCard: React.FC<MetricsCardProps> = ({ metrics }) => {
+  // Compute weakest areas
+  const metricEntries: { label: string; value: number }[] = [
+    { label: 'Clarity', value: metrics.clarity },
+    { label: 'Details', value: metrics.specificity },
+    { label: 'Background', value: metrics.context },
+    { label: 'Focus', value: metrics.goalOrientation },
+    { label: 'Structure', value: metrics.structure },
+    { label: 'Boundaries', value: metrics.constraints },
+  ];
+  const weakest = metricEntries
+    .filter(m => m.value < 60)
+    .sort((a, b) => a.value - b.value)
+    .slice(0, 3)
+    .map(m => m.label);
+
   return (
     <div className="relative pt-24 md:pt-32 border-t border-white/10">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-radial-gradient from-zinc-800/20 via-transparent to-transparent -z-10 pointer-events-none" />
@@ -99,6 +153,16 @@ export const MetricsCard: React.FC<MetricsCardProps> = ({ metrics }) => {
             desc="The limits on what the AI should and shouldn't do."
           />
         </div>
+
+        {/* Weakest areas summary */}
+        {weakest.length > 0 && (
+          <div className="text-center pt-4">
+            <p className="text-[12px] font-bold text-zinc-500 tracking-wide">
+              Your weakest areas: <span className="text-amber-400">{weakest.join(', ')}</span>.
+              <span className="text-zinc-400 ml-1">The optimized prompt fixes all of these. ✦</span>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

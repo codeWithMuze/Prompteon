@@ -1,20 +1,38 @@
 
 export enum PromptMode {
   GENERAL = 'General Purpose',
+  CODE = 'Coding & Dev',
+  MARKETING = 'Marketing & Copy',
+  RESEARCH = 'Research & Analysis',
   CREATIVE = 'Creative Writing',
+  DATA_ANALYTICS = 'Data & Analytics',
   TECHNICAL = 'Technical',
   ACADEMIC = 'Academic',
   BUSINESS = 'Business',
-  CODE = 'Code Generation'
 }
 
 export const ModeDetails: Record<PromptMode, string> = {
   [PromptMode.GENERAL]: "Balanced optimization for any use case",
+  [PromptMode.CODE]: "Optimized for algorithmic logic and syntax",
+  [PromptMode.MARKETING]: "Persuasive copy, ads, and social media content",
+  [PromptMode.RESEARCH]: "Structured for deep research and formal inquiry",
   [PromptMode.CREATIVE]: "Forged for storytelling and artistic depth",
+  [PromptMode.DATA_ANALYTICS]: "Data processing, SQL, charts, and insights",
   [PromptMode.TECHNICAL]: "Focused on extreme precision and accuracy",
-  [PromptMode.ACADEMIC]: "Structured for research and formal inquiry",
+  [PromptMode.ACADEMIC]: "Academic papers, citations, and formal tone",
   [PromptMode.BUSINESS]: "Professional tone for high-stakes communication",
-  [PromptMode.CODE]: "Optimized for algorithmic logic and syntax"
+};
+
+export const ModeIcons: Record<PromptMode, string> = {
+  [PromptMode.GENERAL]: '⚡',
+  [PromptMode.CODE]: '🧑‍💻',
+  [PromptMode.MARKETING]: '📣',
+  [PromptMode.RESEARCH]: '🔍',
+  [PromptMode.CREATIVE]: '✍️',
+  [PromptMode.DATA_ANALYTICS]: '📊',
+  [PromptMode.TECHNICAL]: '🔧',
+  [PromptMode.ACADEMIC]: '🎓',
+  [PromptMode.BUSINESS]: '💼',
 };
 
 // Added missing AuthMode type for authentication state management
